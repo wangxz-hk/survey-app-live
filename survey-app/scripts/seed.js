@@ -1,27 +1,12 @@
-const Database = require('better-sqlite3');
+const { createClient } = require('@libsql/client');
 const path = require('path');
 const crypto = require('crypto');
 
-const dbPath = path.join(process.cwd(), 'survey.db');
-const db = new Database(dbPath);
-
-db.exec(`
-  CREATE TABLE IF NOT EXISTS surveys (
-    id TEXT PRIMARY KEY,
-    title TEXT NOT NULL,
-    description TEXT,
-    questions TEXT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  );
-  
-  CREATE TABLE IF NOT EXISTS responses (
-    id TEXT PRIMARY KEY,
-    survey_id TEXT NOT NULL,
-    answers TEXT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY(survey_id) REFERENCES surveys(id)
-  );
-`);
+// Ensure standard path locally
+const db = createClient({
+    url: process.env.TURSO_DATABASE_URL || "file:survey.db",
+    authToken: process.env.TURSO_AUTH_TOKEN,
+});
 
 const surveyId = crypto.randomUUID();
 
@@ -56,17 +41,43 @@ const mockSurvey = {
     ])
 };
 
-try {
-    const stmt = db.prepare('INSERT INTO surveys (id, title, description, questions) VALUES (?, ?, ?, ?)');
-    stmt.run(mockSurvey.id, mockSurvey.title, mockSurvey.description, mockSurvey.questions);
-    console.log('✅ Mock survey created successfully!');
-    console.log(`\n🔗 Links to share:`);
-    console.log(`Survey Link: /survey/${surveyId}`);
-    console.log(`Analytics Dashboard: /analytics/${surveyId}`);
-} catch (error) {
-    if (error.code === 'SQLITE_CONSTRAINT_PRIMARYKEY') {
-        console.log('Mock survey already exists.');
-    } else {
-        console.error('Failed to create mock survey:', error);
+async function seed() {
+    await db.execute(`
+    CREATE TABLE IF NOT EXISTS surveys (
+        id TEXT PRIMARY KEY,
+        title TEXT NOT NULL,
+        description TEXT,
+        questions TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+    `);
+
+    await db.execute(`
+    CREATE TABLE IF NOT EXISTS responses (
+        id TEXT PRIMARY KEY,
+        survey_id TEXT NOT NULL,
+        answers TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(survey_id) REFERENCES surveys(id)
+    );
+    `);
+
+    try {
+        await db.execute({
+            sql: 'INSERT INTO surveys (id, title, description, questions) VALUES (?, ?, ?, ?)',
+            args: [mockSurvey.id, mockSurvey.title, mockSurvey.description, mockSurvey.questions]
+        });
+        console.log('✅ Mock survey created successfully!');
+        console.log(`\n🔗 Links to share:`);
+        console.log(`Survey Link: /survey/${surveyId}`);
+        console.log(`Analytics Dashboard: /analytics/${surveyId}`);
+    } catch (error) {
+        if (error.code === 'SQLITE_CONSTRAINT_PRIMARYKEY' || (error.message && error.message.includes('UNIQUE constraint failed'))) {
+            console.log('Mock survey already exists.');
+        } else {
+            console.error('Failed to create mock survey:', error);
+        }
     }
 }
+
+seed();
