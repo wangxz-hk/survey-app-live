@@ -47,3 +47,25 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }
+
+export async function PUT(request: Request) {
+    try {
+        await initDb();
+        const body = await request.json();
+        const { id, title, description, questions } = body;
+
+        if (!id || !title || !questions) {
+            return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+        }
+
+        await db.execute({
+            sql: 'UPDATE surveys SET title = ?, description = ?, questions = ? WHERE id = ?',
+            args: [title, description, JSON.stringify(questions), id]
+        });
+
+        return NextResponse.json({ success: true, id }, { status: 200 });
+    } catch (error) {
+        console.error('Database error:', error);
+        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    }
+}

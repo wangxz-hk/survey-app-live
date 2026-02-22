@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
@@ -16,13 +16,26 @@ interface QuestionDraft {
     options: string[];
 }
 
-export default function CreateSurvey() {
+export default function EditSurvey({ params }: { params: Promise<{ id: string }> }) {
+    const { id: surveyId } = use(params);
     const router = useRouter();
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [questions, setQuestions] = useState<QuestionDraft[]>([]);
     const [isSaving, setIsSaving] = useState(false);
     const [publishedId, setPublishedId] = useState<string | null>(null);
+
+    useEffect(() => {
+        fetch(`/api/surveys?id=${surveyId}`)
+            .then(res => res.json())
+            .then(data => {
+                if (!data.error) {
+                    setTitle(data.title);
+                    setDescription(data.description || '');
+                    setQuestions(JSON.parse(data.questions));
+                }
+            });
+    }, [surveyId]);
 
     const addQuestion = (type: QuestionType) => {
         const newQ: QuestionDraft = {
@@ -76,15 +89,14 @@ export default function CreateSurvey() {
         if (questions.length === 0) return alert('Please add at least one question');
 
         setIsSaving(true);
-        const id = crypto.randomUUID();
         try {
             const res = await fetch('/api/surveys', {
-                method: 'POST',
+                method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id, title, description, questions }),
+                body: JSON.stringify({ id: surveyId, title, description, questions }),
             });
             if (res.ok) {
-                setPublishedId(id);
+                setPublishedId(surveyId);
             } else {
                 alert('Failed to save survey');
             }
@@ -99,8 +111,8 @@ export default function CreateSurvey() {
         return (
             <div className="container py-20 flex flex-col items-center justify-center animate-in text-center max-w-lg">
                 <CheckCircle size={80} className="text-secondary mb-6" />
-                <h1 className="text-4xl font-heading text-gradient mb-4">Survey Published!</h1>
-                <p className="text-lg text-muted mb-8">Your survey is live and ready to be shared with respondents.</p>
+                <h1 className="text-4xl font-heading text-gradient mb-4">Survey Updated!</h1>
+                <p className="text-lg text-muted mb-8">Your survey changes are live and ready to be collected.</p>
 
                 <div className="flex flex-col gap-6 w-full">
                     <Card className="flex flex-col gap-3 border-t-4 border-t-primary">
@@ -139,11 +151,13 @@ export default function CreateSurvey() {
                             <Mail size={16} /> Email Links to wangxz@fudan.edu.cn
                         </Button>
                         <Button
-                            onClick={() => window.open(`/edit/${publishedId}`, '_blank')}
+                            onClick={() => {
+                                setPublishedId(null);
+                            }}
                             variant="ghost"
                             className="w-full gap-2 text-muted hover:text-primary mt-1"
                         >
-                            <Edit3 size={16} /> Edit Survey Template
+                            <Edit3 size={16} /> Continue Editing
                         </Button>
                     </Card>
                 </div>
@@ -154,9 +168,9 @@ export default function CreateSurvey() {
     return (
         <div className="container py-8 animate-in">
             <div className="flex justify-between items-center mb-8">
-                <h1 className="text-3xl font-heading text-primary">Builder</h1>
+                <h1 className="text-3xl font-heading text-primary">Edit Template</h1>
                 <Button onClick={handleSave} isLoading={isSaving} className="gap-2">
-                    <CheckCircle size={18} /> Publish Survey
+                    <CheckCircle size={18} /> Update Survey
                 </Button>
             </div>
 
