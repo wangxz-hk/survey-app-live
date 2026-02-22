@@ -1,0 +1,11 @@
+npm i -g vercel
+vercel login
+# 1. 进入项目目录
+cd survey-app
+
+# 2. 部署（首次）
+vercel
+
+# 3. 部署到生产环境
+vercel --prod
+

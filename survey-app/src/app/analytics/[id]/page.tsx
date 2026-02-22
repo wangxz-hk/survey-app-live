@@ -148,16 +148,14 @@ export default function Analytics({ params }: { params: Promise<{ id: string }> 
                                             {Object.entries(data as Record<string, number>).map(([opt, count]) => {
                                                 const percentage = responses.length > 0 ? Math.round((count / responses.length) * 100) : 0;
                                                 return (
-                                                    <div key={opt}>
-                                                        <div className="flex justify-between text-sm mb-1">
-                                                            <span>{opt}</span>
-                                                            <span className="font-medium">{count} ({percentage}%)</span>
-                                                        </div>
-                                                        <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
-                                                            <div
-                                                                className="bg-primary h-full transition-all duration-1000 ease-out"
-                                                                style={{ width: `${percentage}%` }}
-                                                            />
+                                                    <div key={opt} className="w-full bg-gray-100 rounded-md h-10 relative overflow-hidden flex items-center border border-gray-200">
+                                                        <div
+                                                            className="bg-primary/20 h-full transition-all duration-1000 ease-out absolute left-0 top-0"
+                                                            style={{ width: `${percentage}%` }}
+                                                        />
+                                                        <div className="relative z-10 px-4 w-full flex justify-between text-sm font-medium">
+                                                            <span className="text-gray-800 truncate pr-4">{opt}</span>
+                                                            <span className="text-gray-900 whitespace-nowrap">{count} ({percentage}%)</span>
                                                         </div>
                                                     </div>
                                                 );
@@ -178,7 +176,7 @@ export default function Analytics({ params }: { params: Promise<{ id: string }> 
                                         </div>
                                     </div>
                                     <div>
-                                        <p className="text-sm text-muted font-medium mb-4">Score Distribution (Count & Bar)</p>
+                                        <p className="text-sm text-muted font-medium mb-4">Score Distribution</p>
                                         <div className="flex items-end h-48 gap-1 sm:gap-2">
                                             {Object.entries((data as any).counts).map(([score, count]) => {
                                                 const currentCount = count as number;
@@ -190,18 +188,14 @@ export default function Analytics({ params }: { params: Promise<{ id: string }> 
 
                                                 return (
                                                     <div key={score} className="flex-1 flex flex-col items-center gap-2 group">
-                                                        <div className="w-full relative flex-1 flex flex-col justify-end rounded-t-lg bg-gray-50 overflow-hidden border border-gray-100/50">
+                                                        <span className="text-sm font-bold text-gray-800">{currentCount}</span>
+                                                        <div className="w-full relative flex-1 flex flex-col justify-end rounded-t-md bg-gray-50 overflow-hidden border border-gray-100/50">
                                                             <div
                                                                 className={`w-full transition-all duration-700 ease-out ${currentCount > 0 ? 'bg-secondary group-hover:bg-secondary-hover' : 'bg-transparent'}`}
                                                                 style={{ height: `${heightPercent}%` }}
                                                             />
                                                         </div>
-                                                        <div className="flex flex-col items-center">
-                                                            {/* THE NUMBER */}
-                                                            <span className="text-sm font-bold text-gray-800">{currentCount}</span>
-                                                            {/* THE LABEL */}
-                                                            <span className="text-xs font-semibold text-muted">Sc. {score}</span>
-                                                        </div>
+                                                        <span className="text-sm font-medium text-muted">{score}</span>
                                                     </div>
                                                 );
                                             })}
