@@ -22,6 +22,7 @@ export default function CreateSurvey() {
     const [description, setDescription] = useState('');
     const [questions, setQuestions] = useState<QuestionDraft[]>([]);
     const [isSaving, setIsSaving] = useState(false);
+    const [publishedId, setPublishedId] = useState<string | null>(null);
 
     const addQuestion = (type: QuestionType) => {
         const newQ: QuestionDraft = {
@@ -83,7 +84,7 @@ export default function CreateSurvey() {
                 body: JSON.stringify({ id, title, description, questions }),
             });
             if (res.ok) {
-                router.push(`/survey/${id}`);
+                setPublishedId(id);
             } else {
                 alert('Failed to save survey');
             }
@@ -93,6 +94,35 @@ export default function CreateSurvey() {
             setIsSaving(false);
         }
     };
+
+    if (publishedId) {
+        return (
+            <div className="container py-20 flex flex-col items-center justify-center animate-in text-center max-w-lg">
+                <CheckCircle size={80} className="text-secondary mb-6" />
+                <h1 className="text-4xl font-heading text-gradient mb-4">Survey Published!</h1>
+                <p className="text-lg text-muted mb-8">Your survey is live and ready to be shared with respondents.</p>
+
+                <div className="flex flex-col gap-6 w-full">
+                    <Card className="flex flex-col gap-3 border-t-4 border-t-primary">
+                        <p className="font-semibold text-gray-800">Share this link to collect responses:</p>
+                        <div className="p-3 bg-gray-50 border border-gray-200 rounded-md text-sm font-mono break-all text-primary select-all">
+                            {typeof window !== 'undefined' ? window.location.origin : ''}/survey/{publishedId}
+                        </div>
+                        <Button onClick={() => window.open(`/survey/${publishedId}`, '_blank')} variant="primary" className="mt-2 w-full">
+                            Take Survey
+                        </Button>
+                    </Card>
+
+                    <Card className="flex flex-col gap-3 border-l-4 border-l-secondary bg-gradient-to-r from-secondary/5 to-transparent">
+                        <p className="font-semibold text-gray-800">Track your results here:</p>
+                        <Button onClick={() => window.open(`/analytics/${publishedId}`, '_blank')} variant="secondary" className="w-full">
+                            View Analytics Dashboard
+                        </Button>
+                    </Card>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="container py-8 animate-in">

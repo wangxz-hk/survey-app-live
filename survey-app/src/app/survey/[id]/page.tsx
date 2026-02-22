@@ -70,9 +70,6 @@ export default function TakeSurvey({ params }: { params: Promise<{ id: string }>
                 <CheckCircle2 size={80} className="text-secondary mb-6" />
                 <h1 className="text-4xl font-heading text-gradient mb-4">Thank You!</h1>
                 <p className="text-lg text-muted mb-8">Your response has been successfully recorded.</p>
-                <Button onClick={() => router.push(`/analytics/${id}`)} variant="primary">
-                    View Results Dashboard
-                </Button>
             </div>
         );
     }
