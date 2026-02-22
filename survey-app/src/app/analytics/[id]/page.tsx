@@ -192,9 +192,9 @@ export default function Analytics({ params }: { params: Promise<{ id: string }> 
                                                                 {percentage}%
                                                             </div>
                                                         )}
-                                                        <div style={{ width: '100%', position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', borderRadius: '4px 4px 0 0', background: currentCount > 0 ? 'var(--bg-card)' : 'transparent', border: currentCount > 0 ? '1px solid var(--border)' : 'none', borderBottom: 'none', height: '100%' }}>
+                                                        <div style={{ width: '100%', position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', height: '100%' }}>
                                                             <div
-                                                                style={{ width: '100%', height: `${heightPercent}%`, background: currentCount > 0 ? 'var(--secondary)' : 'transparent', transition: 'height 0.7s ease-out' }}
+                                                                style={{ width: '100%', height: `${heightPercent}%`, borderRadius: '4px 4px 0 0', background: currentCount > 0 ? 'var(--secondary)' : 'transparent', transition: 'height 0.7s ease-out' }}
                                                             />
                                                         </div>
                                                         <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)', marginTop: '8px' }}>{score}</span>
