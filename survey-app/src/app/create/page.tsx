@@ -115,7 +115,10 @@ export default function CreateSurvey() {
 
                     <Card className="flex flex-col gap-3 border-l-4 border-l-secondary bg-gradient-to-r from-secondary/5 to-transparent">
                         <p className="font-semibold text-gray-800">Track your results here:</p>
-                        <Button onClick={() => window.open(`/analytics/${publishedId}`, '_blank')} variant="secondary" className="w-full">
+                        <div className="p-3 bg-gray-50 border border-gray-200 rounded-md text-sm font-mono break-all text-secondary select-all">
+                            {typeof window !== 'undefined' ? window.location.origin : ''}/analytics/{publishedId}
+                        </div>
+                        <Button onClick={() => window.open(`/analytics/${publishedId}`, '_blank')} variant="secondary" className="w-full mt-2">
                             View Analytics Dashboard
                         </Button>
                     </Card>
