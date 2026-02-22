@@ -6,7 +6,6 @@ import { Button } from '@/components/Button';
 import { Survey, SurveyResponse, Question } from '@/lib/db';
 import Link from 'next/link';
 import { BarChart3, Users } from 'lucide-react';
-import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Cell } from 'recharts';
 
 export default function Analytics({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
@@ -178,61 +177,32 @@ export default function Analytics({ params }: { params: Promise<{ id: string }> 
                                     </div>
                                     <div>
                                         <p className="text-sm text-muted font-medium mb-4">Score Distribution</p>
-                                        <div className="h-64 w-full mt-6">
-                                            {(() => {
+                                        <div className="flex items-end h-64 gap-1 sm:gap-2 px-1 border-b border-gray-200 pb-2 bg-gradient-to-b from-transparent to-gray-50/50 pt-8 rounded-b-md">
+                                            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(score => {
                                                 const countsHash = (data as any).counts as Record<number, number>;
+                                                const currentCount = countsHash[score] || 0;
                                                 const totalScaleResponses = Object.values(countsHash).reduce((sum, val) => sum + val, 0);
 
-                                                const chartData = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(score => {
-                                                    const currentCount = countsHash[score] || 0;
-                                                    const percentage = totalScaleResponses > 0 ? Math.round((currentCount / totalScaleResponses) * 100) : 0;
-                                                    return {
-                                                        name: score.toString(),
-                                                        percentage: percentage,
-                                                        count: currentCount
-                                                    };
-                                                });
-
-                                                const CustomTooltip = ({ active, payload, label }: any) => {
-                                                    if (active && payload && payload.length) {
-                                                        return (
-                                                            <div className="bg-white p-3 border border-gray-100 shadow-lg rounded-md text-sm">
-                                                                <p className="font-semibold text-gray-800 mb-1">Score: {label}</p>
-                                                                <p className="text-primary font-medium">Percentage: {payload[0].value}%</p>
-                                                                <p className="text-muted">Count: {payload[0].payload.count} responses</p>
-                                                            </div>
-                                                        );
-                                                    }
-                                                    return null;
-                                                };
+                                                const percentage = totalScaleResponses > 0 ? Math.round((currentCount / totalScaleResponses) * 100) : 0;
+                                                const heightPercent = currentCount > 0 ? Math.max(percentage, 4) : 0;
 
                                                 return (
-                                                    <ResponsiveContainer width="100%" height="100%">
-                                                        <RechartsBarChart data={chartData} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
-                                                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-                                                            <XAxis
-                                                                dataKey="name"
-                                                                axisLine={false}
-                                                                tickLine={false}
-                                                                tick={{ fill: '#6B7280', fontSize: 13, fontWeight: 500 }}
-                                                                dy={10}
+                                                    <div key={score} className="flex-1 flex flex-col items-center gap-2 group h-full justify-end">
+                                                        {percentage > 0 && (
+                                                            <div className="text-xs font-bold text-gray-800 bg-white px-1.5 py-0.5 rounded shadow-sm border border-gray-100 mb-1 scale-90 sm:scale-100">
+                                                                {percentage}%
+                                                            </div>
+                                                        )}
+                                                        <div className="w-full relative flex flex-col justify-end rounded-t-sm bg-gray-100 overflow-hidden border border-gray-200/50 mx-[1px]" style={{ height: '100%' }}>
+                                                            <div
+                                                                className={`w-full transition-all duration-700 ease-out ${percentage > 0 ? 'bg-secondary group-hover:bg-secondary-hover' : 'bg-transparent'}`}
+                                                                style={{ height: `${heightPercent}%` }}
                                                             />
-                                                            <YAxis
-                                                                axisLine={false}
-                                                                tickLine={false}
-                                                                tick={{ fill: '#6B7280', fontSize: 13 }}
-                                                                tickFormatter={(value) => `${value}%`}
-                                                            />
-                                                            <Tooltip cursor={{ fill: '#F3F4F6' }} content={<CustomTooltip />} />
-                                                            <Bar dataKey="percentage" radius={[4, 4, 0, 0]} maxBarSize={50}>
-                                                                {chartData.map((entry, index) => (
-                                                                    <Cell key={`cell-${index}`} fill={entry.percentage > 0 ? '#14b8a6' : '#E5E7EB'} />
-                                                                ))}
-                                                            </Bar>
-                                                        </RechartsBarChart>
-                                                    </ResponsiveContainer>
+                                                        </div>
+                                                        <span className="text-sm font-semibold text-gray-600 mt-1">{score}</span>
+                                                    </div>
                                                 );
-                                            })()}
+                                            })}
                                         </div>
                                     </div>
                                 </div>
