@@ -2,8 +2,8 @@ import { createClient } from '@libsql/client';
 
 // Initialize the libSQL/Turso database connection
 const db = createClient({
-  url: process.env.TURSO_DATABASE_URL || "file:survey.db",
-  authToken: process.env.TURSO_AUTH_TOKEN,
+  url: "libsql://survey-app-db-vercel-icfg-sj3amubcypkbeyoqpac54d8w.aws-us-east-1.turso.io",
+  authToken: "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NzE3MzAzMDYsImlkIjoiMzRiZGNkYWYtZmRlZC00YWVhLWE4M2ItOTMwOGVlOTc2MTkyIiwicmlkIjoiZWMxMzljMmItNjU1OS00Mzc3LThiNjctOGUyMTAyN2UyZWE1In0.knLn2JDfm8CfX4dwyG5cvV0evi64X6vpa8jTpH-1INAsAYkrYasqiYmhrymP3CgLyjWr5vjs57lxvkQgZ--mBQ",
 });
 
 // Initialize tables if they don't exist
