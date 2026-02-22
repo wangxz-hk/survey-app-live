@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { Input } from '@/components/Input';
-import { PlusCircle, Trash2, GripVertical, CheckCircle } from 'lucide-react';
+import { PlusCircle, Trash2, GripVertical, CheckCircle, Mail } from 'lucide-react';
 
 type QuestionType = 'text' | 'single_choice' | 'multiple_choice' | 'scale';
 
@@ -117,6 +117,23 @@ export default function CreateSurvey() {
                         <p className="font-semibold text-gray-800">Track your results here:</p>
                         <Button onClick={() => window.open(`/analytics/${publishedId}`, '_blank')} variant="secondary" className="w-full">
                             View Analytics Dashboard
+                        </Button>
+                    </Card>
+
+                    <Card className="flex flex-col gap-3 border-l-4 border-l-primary bg-gradient-to-r from-primary-light/10 to-transparent">
+                        <p className="font-semibold text-gray-800">Save your links:</p>
+                        <Button
+                            onClick={() => {
+                                const takeLink = `${window.location.origin}/survey/${publishedId}`;
+                                const dashLink = `${window.location.origin}/analytics/${publishedId}`;
+                                const subject = encodeURIComponent(`Your Survey Links: ${title}`);
+                                const body = encodeURIComponent(`Hello,\n\nHere are the links for your survey: "${title}"\n\nLink to Distribute to Respondents:\n${takeLink}\n\nPrivate Results Dashboard:\n${dashLink}\n\nThanks!`);
+                                window.open(`mailto:wangxz@fudan.edu.cn?subject=${subject}&body=${body}`);
+                            }}
+                            variant="secondary"
+                            className="w-full gap-2 border-primary text-primary hover:bg-primary hover:text-white transition-colors"
+                        >
+                            <Mail size={16} /> Email Links to wangxz@fudan.edu.cn
                         </Button>
                     </Card>
                 </div>
