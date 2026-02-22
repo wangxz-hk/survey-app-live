@@ -138,10 +138,14 @@ export default function CreateSurvey() {
                         >
                             <Mail size={16} /> Email Links to wangxz@fudan.edu.cn
                         </Button>
+                    </Card>
+
+                    <Card className="flex flex-col gap-3 border-l-4 border-l-gray-400 bg-gradient-to-r from-gray-100/50 to-transparent">
+                        <p className="font-semibold text-gray-800">Need to make changes?</p>
                         <Button
                             onClick={() => window.open(`/edit/${publishedId}`, '_blank')}
-                            variant="ghost"
-                            className="w-full gap-2 text-muted hover:text-primary mt-1"
+                            variant="secondary"
+                            className="w-full gap-2 text-gray-700 mt-1"
                         >
                             <Edit3 size={16} /> Edit Survey Template
                         </Button>
