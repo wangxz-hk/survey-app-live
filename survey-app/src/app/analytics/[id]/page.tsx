@@ -144,18 +144,17 @@ export default function Analytics({ params }: { params: Promise<{ id: string }> 
                                     {Object.keys(data as Record<string, number>).length === 0 ? (
                                         <p className="text-muted italic">No responses yet.</p>
                                     ) : (
-                                        <div className="flex flex-col gap-4">
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                                             {Object.entries(data as Record<string, number>).map(([opt, count]) => {
                                                 const percentage = responses.length > 0 ? Math.round((count / responses.length) * 100) : 0;
                                                 return (
-                                                    <div key={opt} className="w-full bg-gray-100 rounded-md h-10 relative overflow-hidden flex items-center border border-gray-200">
+                                                    <div key={opt} style={{ width: '100%', background: 'var(--bg-input)', borderRadius: 'var(--radius-md)', padding: '0', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', border: '1px solid var(--border)', height: '3rem' }}>
                                                         <div
-                                                            className="bg-primary/20 h-full transition-all duration-1000 ease-out absolute left-0 top-0"
-                                                            style={{ width: `${percentage}%` }}
+                                                            style={{ position: 'absolute', left: 0, top: 0, height: '100%', background: 'var(--primary-light)', width: `${percentage}%`, transition: 'width 1s ease-out' }}
                                                         />
-                                                        <div className="relative z-10 px-4 w-full flex justify-between text-sm font-medium">
-                                                            <span className="text-gray-800 truncate pr-4">{opt}</span>
-                                                            <span className="text-gray-900 whitespace-nowrap">{count} ({percentage}%)</span>
+                                                        <div style={{ position: 'relative', zIndex: 10, padding: '0 1rem', width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '1rem', fontWeight: 500 }}>
+                                                            <span style={{ color: 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', paddingRight: '1rem' }}>{opt}</span>
+                                                            <span style={{ color: 'var(--text-main)', whiteSpace: 'nowrap', fontWeight: 600 }}>{count} ({percentage}%)</span>
                                                         </div>
                                                     </div>
                                                 );
@@ -176,8 +175,8 @@ export default function Analytics({ params }: { params: Promise<{ id: string }> 
                                         </div>
                                     </div>
                                     <div>
-                                        <p className="text-sm text-muted font-medium mb-4">Score Distribution</p>
-                                        <div className="flex items-end h-64 gap-1 sm:gap-2 px-1 border-b border-gray-200 pb-2 bg-gradient-to-b from-transparent to-gray-50/50 pt-8 rounded-b-md">
+                                        <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: 600, marginBottom: '1.5rem' }}>Score Distribution</p>
+                                        <div style={{ display: 'flex', alignItems: 'flex-end', height: '250px', gap: '8px', padding: '15px 5px 0', borderBottom: '2px solid var(--border)', background: 'linear-gradient(to bottom, transparent, var(--bg-input))', borderRadius: '0 0 var(--radius-md) var(--radius-md)' }}>
                                             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(score => {
                                                 const countsHash = (data as any).counts as Record<number, number>;
                                                 const currentCount = countsHash[score] || 0;
@@ -187,19 +186,18 @@ export default function Analytics({ params }: { params: Promise<{ id: string }> 
                                                 const heightPercent = currentCount > 0 ? Math.max(percentage, 4) : 0;
 
                                                 return (
-                                                    <div key={score} className="flex-1 flex flex-col items-center gap-2 group h-full justify-end">
+                                                    <div key={score} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'flex-end' }}>
                                                         {percentage > 0 && (
-                                                            <div className="text-xs font-bold text-gray-800 bg-white px-1.5 py-0.5 rounded shadow-sm border border-gray-100 mb-1 scale-90 sm:scale-100">
+                                                            <div style={{ fontSize: '0.75rem', fontWeight: 700, background: 'var(--bg-card)', padding: '2px 6px', borderRadius: '4px', boxShadow: 'var(--shadow-sm)', border: '1px solid var(--border)', marginBottom: '8px' }}>
                                                                 {percentage}%
                                                             </div>
                                                         )}
-                                                        <div className="w-full relative flex flex-col justify-end rounded-t-sm bg-gray-100 overflow-hidden border border-gray-200/50 mx-[1px]" style={{ height: '100%' }}>
+                                                        <div style={{ width: '100%', position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', borderRadius: '4px 4px 0 0', background: 'var(--bg-card)', border: '1px solid var(--border)', borderBottom: 'none', height: '100%' }}>
                                                             <div
-                                                                className={`w-full transition-all duration-700 ease-out ${percentage > 0 ? 'bg-secondary group-hover:bg-secondary-hover' : 'bg-transparent'}`}
-                                                                style={{ height: `${heightPercent}%` }}
+                                                                style={{ width: '100%', height: `${heightPercent}%`, background: percentage > 0 ? 'var(--secondary)' : 'transparent', transition: 'height 0.7s ease-out' }}
                                                             />
                                                         </div>
-                                                        <span className="text-sm font-semibold text-gray-600 mt-1">{score}</span>
+                                                        <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)', marginTop: '8px' }}>{score}</span>
                                                     </div>
                                                 );
                                             })}
