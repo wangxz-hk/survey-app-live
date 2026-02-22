@@ -181,17 +181,18 @@ export default function Analytics({ params }: { params: Promise<{ id: string }> 
                                             {Object.entries((data as any).counts).map(([score, count]) => {
                                                 const currentCount = count as number;
                                                 const countsHash = (data as any).counts as Record<number, number>;
-                                                const maxCount = Math.max(...Object.values(countsHash));
+                                                const totalScaleResponses = Object.values(countsHash).reduce((sum, val) => sum + val, 0);
 
-                                                // Calculate bar height visually. Give minimum small height if count > 0, 0 if 0.
-                                                const heightPercent = maxCount > 0 ? Math.max((currentCount / maxCount) * 100, (currentCount > 0 ? 5 : 0)) : 0;
+                                                // Calculate the percentage of total respondents for this score
+                                                const percentage = totalScaleResponses > 0 ? Math.round((currentCount / totalScaleResponses) * 100) : 0;
+                                                const heightPercent = percentage; // Height maps exactly to 0-100%
 
                                                 return (
                                                     <div key={score} className="flex-1 flex flex-col items-center gap-2 group">
-                                                        <span className="text-sm font-bold text-gray-800">{currentCount}</span>
+                                                        <span className="text-sm font-bold text-gray-800">{percentage}%</span>
                                                         <div className="w-full relative flex-1 flex flex-col justify-end rounded-t-md bg-gray-50 overflow-hidden border border-gray-100/50">
                                                             <div
-                                                                className={`w-full transition-all duration-700 ease-out ${currentCount > 0 ? 'bg-secondary group-hover:bg-secondary-hover' : 'bg-transparent'}`}
+                                                                className={`w-full transition-all duration-700 ease-out ${percentage > 0 ? 'bg-secondary group-hover:bg-secondary-hover' : 'bg-transparent'}`}
                                                                 style={{ height: `${heightPercent}%` }}
                                                             />
                                                         </div>
